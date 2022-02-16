@@ -10,6 +10,29 @@ const getBoards = (req, res, next) => {
   });
 };
 
+const getBoard = async (req, res, next) => {
+  const id = req.params.id;
+  try {
+    const board = await Board.findById(id)
+      .populate
+      //   {
+      //   path: "lists",
+      //   populate: {
+      //     path: "cards",
+      //   },
+      // }
+      ();
+
+    if (!board) {
+      throw new Error();
+    }
+
+    res.json(board);
+  } catch (err) {
+    next(new HttpError(`Board id: ${id} cannot be found`, 500));
+  }
+};
+
 const createBoard = (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
@@ -27,5 +50,6 @@ const createBoard = (req, res, next) => {
   }
 };
 
+exports.getBoard = getBoard;
 exports.getBoards = getBoards;
 exports.createBoard = createBoard;

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const BoardSchema = new Schema({
+const ListSchema = new Schema({
   title: {
     type: String,
     required: [true, "The Board title is required"],
@@ -12,14 +12,21 @@ const BoardSchema = new Schema({
   updatedAt: {
     type: Date,
   },
-  lists: [
+  boardId: {
+    type: mongoose.Types.ObjectId,
+    ref: "Board",
+  },
+  position: {
+    type: mongoose.Decimal128,
+  },
+  cards: [
     {
       type: mongoose.Types.ObjectId,
-      ref: "List",
+      ref: "Card",
     },
   ],
 });
 
-const Board = mongoose.model("Board", BoardSchema);
+const List = mongoose.model("List", ListSchema);
 
-module.exports = Board;
+module.exports = List;

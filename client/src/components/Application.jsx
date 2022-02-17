@@ -13,6 +13,7 @@ import DueDatePopover from "./ui/DueDatePopover";
 import LabelsPopover from "./ui/LabelsPopover";
 import MoveCardPopover from "./ui/MoveCardPopover";
 import SingleBoard from "./ui/SingleBoard";
+import Board from "./ui/Board";
 
 const Application = () => {
   return (
@@ -33,7 +34,7 @@ const Application = () => {
       <Route path="/ui/labelsPopover" component={LabelsPopover} />
       <Route path="/ui/moveCardPopover" component={MoveCardPopover} />
       <Route path="/ui/singleBoard" component={SingleBoard} />
-      <Route path="/boards/:id" component={SingleBoard} />
+      <Route path="/boards/:id" component={Board} />
     </div>
   );
 };

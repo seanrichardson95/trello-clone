@@ -45,15 +45,14 @@ export function fetchBoardRequest(id) {
   return { type: types.BOARD_FETCHED, id };
 }
 
-export function fetchBoard(id, callback) {
+export function fetchBoard(id) {
   return function(dispatch) {
     // dispatch(fetchBoardRequest(id));
     apiClient.getBoard(id, data => {
       dispatch(fetchBoardSuccess(data));
-
-      if (callback) {
-        callback(data);
-      }
+      // if (callback) {
+      //   callback();
+      // }
     });
   }
 }

@@ -2,7 +2,7 @@ const Card = require("../models/card");
 const HttpError = require("../models/httpError");
 const { validationResult } = require("express-validator");
 
-const createBoard = (req, res, next) => {
+const createCard = (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
     Board.create(req.body.board)

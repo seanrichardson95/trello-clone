@@ -30,14 +30,6 @@ const Board = () => {
       </header>
       <main>
         <ExistingLists boardId={id} />
-        <div id="new-list" className="new-list">
-          <span>Add a list...</span>
-          <input type="text" placeholder="Add a list..." />
-          <div>
-            <input type="submit" className="button" value="Save" />
-            <i className="x-icon icon"></i>
-          </div>
-        </div>
       </main>
       <div className="menu-sidebar">
         <div id="menu-main" className="main slide">

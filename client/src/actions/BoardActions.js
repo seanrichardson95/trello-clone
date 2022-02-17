@@ -36,3 +36,24 @@ export function createBoard(board, callback) {
     });
   };
 }
+
+export function fetchBoardSuccess(board) {
+  return { type: types.BOARD_FETCHED, board };
+}
+
+export function fetchBoardRequest(id) {
+  return { type: types.BOARD_FETCHED, id };
+}
+
+export function fetchBoard(id, callback) {
+  return function(dispatch) {
+    // dispatch(fetchBoardRequest(id));
+    apiClient.getBoard(id, data => {
+      dispatch(fetchBoardSuccess(data));
+
+      if (callback) {
+        callback(data);
+      }
+    });
+  }
+}

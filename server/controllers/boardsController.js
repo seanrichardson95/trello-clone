@@ -14,14 +14,10 @@ const getBoard = async (req, res, next) => {
   const id = req.params.id;
   try {
     const board = await Board.findById(id)
-      .populate
-      //   {
-      //   path: "lists",
-      //   populate: {
-      //     path: "cards",
-      //   },
-      // }
-      ();
+      .populate({
+        path: 'lists',
+        populate: { path: 'cards' }
+      });
 
     if (!board) {
       throw new Error();

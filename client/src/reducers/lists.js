@@ -1,6 +1,8 @@
+import * as actions from "../constants/ActionTypes"
+
 export default function lists(state = [], action) {
   switch (action.type) {
-    case "BOARD_FETCHED": {
+    case actions.BOARD_FETCHED: {
       let newState = [...state];
       action.board.lists.forEach(origList => {
         // eslint-disable-next-line no-unused-vars
@@ -10,6 +12,9 @@ export default function lists(state = [], action) {
         }
       });
       return newState;
+    }
+    case actions.CREATE_LIST_SUCCESS: {
+      return [...state, action.list];
     }
     default:
       return state;

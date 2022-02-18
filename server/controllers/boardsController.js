@@ -46,6 +46,19 @@ const createBoard = (req, res, next) => {
   }
 };
 
+const addListToBoard = async (req, res, next) => {
+  try {
+    const board = await Board.findById(req.list.boardId);
+    board.lists.push(req.list._id);
+    await board.save();
+    console.log("board saved");
+    next()
+  } catch (e) {
+    next(new HttpError("Board not found failed, please try again", 500))
+  }
+}
+
 exports.getBoard = getBoard;
 exports.getBoards = getBoards;
 exports.createBoard = createBoard;
+exports.addListToBoard = addListToBoard;

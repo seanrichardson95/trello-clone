@@ -5,7 +5,6 @@ import CardItem from './CardItem';
 const List = ({ id }) => {
   const list = useSelector(state => state.lists.find(list => list._id === id));
   const cards = useSelector(state => state.cards.filter(card => card.listId === id));
-  console.log(cards);
 
   return (
     <div className="list-wrapper">

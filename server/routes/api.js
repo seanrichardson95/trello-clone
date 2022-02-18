@@ -15,7 +15,7 @@ router.get("/boards", boardsController.getBoards);
 
 router.post("/boards", validateBoard, boardsController.createBoard);
 
-router.post("/lists", validateList, listsController.createList);
+router.post("/lists", validateList, listsController.createList, boardsController.addListToBoard, listsController.sendList);
 
 // router.post("/cards", validateCard, cardsController.createCard);
 

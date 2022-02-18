@@ -5,8 +5,6 @@ const { validationResult } = require("express-validator");
 
 const createList = async (req, res, next) => {
   const errors = validationResult(req);
-  console.log(errors);
-  console.log(req.body);
   if (errors.isEmpty()) {
     const newList = {
       title: req.body.list.title || "My List",
@@ -28,9 +26,25 @@ const createList = async (req, res, next) => {
   }
 };
 
+const editList = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (errors.isEmpty()) {
+    try {
+      let list = await List.findOneAndUpdate({_id: req.params.id}, req.body, { new: true });
+      req.list = list;
+      next()
+    } catch (e) {
+      next(new HttpError("List to update not found, please try again", 500));
+    }
+  } else {
+    return next(new HttpError("The input field is empty.", 404));
+  }
+}
+
 const sendList = (req, res, next) => {
   res.json({ list: req.list });
 }
 
 exports.createList = createList;
 exports.sendList = sendList;
+exports.editList = editList;

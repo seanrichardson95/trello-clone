@@ -16,8 +16,29 @@ export function createList(list, callback) {
       dispatch(createListSuccess(data.list));
 
       if (callback) {
-        callback(data.list);
+        callback();
       }
     });
+  }
+}
+
+export function updateListRequest() {
+  return { type: types.UPDATE_LIST_REQUEST }
+}
+
+export function updateListSuccess(list) {
+  return { type: types.UPDATE_LIST_SUCCESS, list };
+}
+
+export function updateList(id, updatedFields, callback) {
+  return function(dispatch) {
+    dispatch(updateListRequest);
+    apiClient.updateList(id, updatedFields, data => {
+      dispatch(updateListSuccess(data.list));
+
+      if (callback) {
+        callback();
+      }
+    })
   }
 }

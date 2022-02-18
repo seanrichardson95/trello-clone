@@ -51,7 +51,6 @@ const addListToBoard = async (req, res, next) => {
     const board = await Board.findById(req.list.boardId);
     board.lists.push(req.list._id);
     await board.save();
-    console.log("board saved");
     next()
   } catch (e) {
     next(new HttpError("Board not found failed, please try again", 500))

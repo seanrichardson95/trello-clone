@@ -1,10 +1,32 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { updateList } from "../../actions/ListActions";
 import CardItem from './CardItem';
 
 const List = ({ id }) => {
+  const dispatch = useDispatch();
   const list = useSelector(state => state.lists.find(list => list._id === id));
   const cards = useSelector(state => state.cards.filter(card => card.listId === id));
+  const [title, setTitle] = useState(list.title);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+
+  const toggleEditing = () => {
+    setIsEditingTitle(!isEditingTitle)
+  };
+
+  const handleEditTitle = (e) => {
+    e.preventDefault();
+    setTitle(e.target.value);
+  }
+
+  const handleBlur = async (e) => {
+    if (title === '') {
+      setTitle(list.title);
+    } else if (title !== list.title) {
+      dispatch(updateList(list._id, { title }));
+    }
+    setIsEditingTitle(false)
+  }
 
   return (
     <div className="list-wrapper">
@@ -12,7 +34,8 @@ const List = ({ id }) => {
         <div className="list">
           <a className="more-icon sm-icon" href=""></a>
           <div>
-            <p className="list-title">{list.title}</p>
+            {!isEditingTitle && <p className="list-title" onClick={toggleEditing}>{list.title}</p>}
+            {isEditingTitle && <input type="text" className="list-title" value={title} onChange={handleEditTitle} onBlur={handleBlur}/>}
           </div>
           <div className="add-dropdown add-top">
             <div className="card"></div>

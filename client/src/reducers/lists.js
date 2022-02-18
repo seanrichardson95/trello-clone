@@ -16,6 +16,12 @@ export default function lists(state = [], action) {
     case actions.CREATE_LIST_SUCCESS: {
       return [...state, action.list];
     }
+    case actions.UPDATE_LIST_SUCCESS: {
+      return state.map(list => {
+        if (list._id !== action.list._id) return list;
+        return action.list;
+      });
+    }
     default:
       return state;
   }

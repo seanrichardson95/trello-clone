@@ -16,10 +16,29 @@ router.get("/boards", boardsController.getBoards);
 
 router.post("/boards", validateBoard, boardsController.createBoard);
 
-router.post("/lists", validateList, listsController.createList, boardsController.addListToBoard, listsController.sendList);
+router.post(
+  "/lists",
+  validateList,
+  listsController.createList,
+  boardsController.addListToBoard,
+  listsController.sendList
+);
 
-router.put("/lists/:id", validateEditList, listsController.editList, listsController.sendList);
+router.put(
+  "/lists/:id",
+  validateEditList,
+  listsController.editList,
+  listsController.sendList
+);
 
-// router.post("/cards", validateCard, cardsController.createCard);
+router.get("/cards/:id", cardsController.getCard);
+
+router.post(
+  "/cards",
+  validateCard,
+  cardsController.createCard,
+  listsController.addCardToList,
+  cardsController.sendCard
+);
 
 module.exports = router;

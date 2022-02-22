@@ -17,21 +17,18 @@ const createCard = async (req, res, next) => {
       completed: false,
       archived: false,
       position: 65535.0,
-      // comments: [],
+      comments: [],
       commentsCount: 0,
-      // actions: [],
+      actions: [],
       labels: [],
       dueDate: null,
     };
-    console.log(newCard);
 
     try {
       const card = await Card.create(newCard);
       req.card = card;
       next();
     } catch (err) {
-      console.log("here");
-      console.log(err);
       next(new HttpError("Creating card failed, please try again", 500));
     }
   } else {
@@ -61,7 +58,6 @@ const sendCard = (req, res, next) => {
 
 const editCard = async (req, res, next) => {
   const errors = validationResult(req);
-  // console.log(req.body);
   if (errors.isEmpty()) {
     try {
       let card = await Card.findOneAndUpdate({ _id: req.params.id }, req.body.card, {

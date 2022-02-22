@@ -42,6 +42,8 @@ router.post(
   cardsController.sendCard
 );
 
+router.put("/cards/:id", cardsController.editCard, cardsController.sendCard);
+
 router.post("/comments", validateComment, cardsController.addComment);
 
 module.exports = router;

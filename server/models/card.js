@@ -24,54 +24,33 @@ const CardSchema = new Schema({
   archived: {
     type: Boolean,
   },
-  createdAt: {
-    type: Date,
-  },
-  updatedAt: {
-    type: Date,
-  },
   dueDate: {
     type: Date,
   },
   completed: {
-    type: Date,
+    type: Boolean,
   },
   boardId: {
     type: mongoose.Types.ObjectId,
     ref: "Board",
   },
-  comments: [
-    {
-      text: { type: String },
-      cardId: {
-        ref: "Card",
-        type: mongoose.Types.ObjectId,
-      },
-      createdAt: { type: Date },
-      updatedAt: { type: Date }
-    }
-  ],
   commentsCount: {
     type: Number,
   },
+  comments: [
+    {
+      ref: "Comment",
+      type: mongoose.Types.ObjectId
+    }
+  ],
   actions: [
     {
-      description: {
-        type: String,
-      },
-      createdAt: {
-        type: Date,
-      },
-      updatedAt: {
-        type: Date,
-      },
-      card_id: {
-        type: mongoose.Types.ObjectId,
-        ref: "Card",
-      },
-    },
+      ref: "Action",
+      type: mongoose.Types.ObjectId
+    }
   ],
-});
+}, { timestamps: true }
+);
 
 const Card = mongoose.model("Card", CardSchema);
 

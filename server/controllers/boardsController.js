@@ -13,11 +13,10 @@ const getBoards = (req, res, next) => {
 const getBoard = async (req, res, next) => {
   const id = req.params.id;
   try {
-    const board = await Board.findById(id)
-      .populate({
-        path: 'lists',
-        populate: { path: 'cards' }
-      });
+    const board = await Board.findById(id).populate({
+      path: "lists",
+      populate: { path: "cards" },
+    });
 
     if (!board) {
       throw new Error();
@@ -51,11 +50,11 @@ const addListToBoard = async (req, res, next) => {
     const board = await Board.findById(req.list.boardId);
     board.lists.push(req.list._id);
     await board.save();
-    next()
+    next();
   } catch (e) {
-    next(new HttpError("Board not found failed, please try again", 500))
+    next(new HttpError("Board not found failed, please try again", 500));
   }
-}
+};
 
 exports.getBoard = getBoard;
 exports.getBoards = getBoards;

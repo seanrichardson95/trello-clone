@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import List from "./List";
 import * as actions from "../../actions/ListActions";
 
-const ExistingLists = ({ boardId }) => {
+const ExistingLists = ({ boardId, onShowCard, onCloseCard }) => {
   const dispatch = useDispatch();
   const [addingList, setAddingList] = useState(false);
   const [newListTitle, setNewListTitle] = useState("");
@@ -39,7 +39,7 @@ const ExistingLists = ({ boardId }) => {
     <div id="list-container" className="list-container">
       <div id="existing-lists" className="existing-lists">
         {lists.map((list) => (
-          <List key={list._id} id={list._id} />
+          <List key={list._id} id={list._id} onShowCard={onShowCard} onCloseCard={onCloseCard} />
         ))}
       </div>
       <div id="new-list" className={`new-list ${addingList ? "selected" : ""}`}>

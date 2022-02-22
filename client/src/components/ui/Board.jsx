@@ -1,16 +1,30 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchBoard } from '../../actions/BoardActions';
 import ExistingLists from './ExistingLists';
+import Card from './Card';
 
-const Board = () => {
-  const id = useParams().id;
-
+const Board = ({ boardId, cardId, isModalOpen }) => {
+  const id = boardId || useParams().id;
   const dispatch = useDispatch();
+  const history = useHistory();
   const board = useSelector(state => state.boards).find(board => board._id === id);
 
   useEffect(() => dispatch(fetchBoard(id)), [dispatch, id]);
+
+
+  const onShowCard = (id) => {
+    return () => {
+      history.push(`/cards/${id}`);
+    };
+  };
+
+  const handleCloseCard = () => {
+    history.push(`/boards/${boardId}`);
+  }
+
   if (!board) return null;
 
   return (
@@ -29,7 +43,7 @@ const Board = () => {
         </div>
       </header>
       <main>
-        <ExistingLists boardId={id} />
+        <ExistingLists boardId={id} onShowCard={onShowCard} />
       </main>
       <div className="menu-sidebar">
         <div id="menu-main" className="main slide">
@@ -121,7 +135,7 @@ const Board = () => {
           </div>
         </div>
       </div>
-      <div id="modal-container"></div>
+      <Card isOpen={isModalOpen || false} id={cardId} handleCloseCard={handleCloseCard} />
       <div id="dropdown-container"></div>
     </>
   );

@@ -1,31 +1,19 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import React from "react";
-import { useSelector } from "react-redux";
 
-const Card = ({ isOpen, id, handleCloseCard }) => {
-  if (!isOpen || !id) {
-    return <div id="modal-container"></div>
-  }
-
-  const card = useSelector((state) => {
-    return state.cards.find((card) => card._id === id);
-  });
-
-  const list = useSelector((state) => state.lists.find((list) => list._id === card.listId));
-
+const Card = () => {
   return (
     <div id="modal-container">
-      { isOpen && id && (
-      <>
         <div className="screen"></div>
         <div id="modal">
-          <i className="x-icon icon close-modal" onClick={handleCloseCard}></i>
+          <i className="x-icon icon close-modal"></i>
           <header>
             <i className="card-icon icon .close-modal"></i>
-            <textarea className="list-title" style={{ height: "45px" }} value={card.title}>
+            <textarea className="list-title" style={{ height: "45px" }}>
+              Cards do many cool things. Click on this card to open it and learn
+              more...
             </textarea>
             <p>
-              in list <a className="link">{list.title}</a>
+              in list <a className="link">Stuff to try (this is a list)</a>
               <i className="sub-icon sm-icon"></i>
             </p>
           </header>
@@ -66,8 +54,7 @@ const Card = ({ isOpen, id, handleCloseCard }) => {
                         className="checkbox"
                         checked=""
                       />
-                      {card.dueDate ? new Date(card.dueDate).toDateString() : "No due date"}
-                      {card.dueDate ? new Date(card.dueDate) > Date.now() ? <span>(past due)</span> : null : null}
+                      Aug 4 at 10:42 AM <span>(past due)</span>
                     </div>
                   </li>
                 </ul>
@@ -77,7 +64,7 @@ const Card = ({ isOpen, id, handleCloseCard }) => {
                     Edit
                   </span>
                   <p className="textarea-overlay">
-                    {card.description}
+                    Cards have a symbol to indicate if they contain a description.
                   </p>
                   <p id="description-edit-options" className="hidden">
                     You have unsaved edits on this field.{" "}
@@ -244,10 +231,7 @@ const Card = ({ isOpen, id, handleCloseCard }) => {
             </ul>
           </aside>
         </div>
-      </>
-      )}
     </div>
   );
 };
-
 export default Card;

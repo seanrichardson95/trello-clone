@@ -4,7 +4,7 @@ import { updateList } from "../../actions/ListActions";
 import AddDropDown from "./AddDropDown";
 import CardItem from './CardItem';
 
-const List = ({ id }) => {
+const List = ({ id, onShowCard }) => {
   const dispatch = useDispatch();
   const list = useSelector(state => state.lists.find(list => list._id === id));
   const cards = useSelector(state => state.cards.filter(card => card.listId === id));
@@ -21,7 +21,7 @@ const List = ({ id }) => {
     setTitle(e.target.value);
   }
 
-  const handleBlur = async (e) => {
+  const handleBlur = async () => {
     if (title === '') {
       setTitle(list.title);
     } else if (title !== list.title) {
@@ -48,7 +48,7 @@ const List = ({ id }) => {
             </div>
           </div>
           <div id="cards-container" data-id={`list-${id}-cards`}>
-            {cards.map(card => <CardItem key={card._id} id={card._id} />)}
+            {cards.map(card => <CardItem key={card._id} id={card._id} handleShowCard={onShowCard(card._id)} />)}
           </div>
           <AddDropDown onToggle={setIsAddingCard} isOpen={isAddingCard} listId={id}/>
         </div>

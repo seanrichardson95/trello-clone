@@ -8,6 +8,7 @@ const {
   validateCard,
   validateList,
   validateEditList,
+  validateComment
 } = require("../validators/validators");
 
 router.get("/boards/:id", boardsController.getBoard);
@@ -40,5 +41,7 @@ router.post(
   listsController.addCardToList,
   cardsController.sendCard
 );
+
+router.post("/comments", validateComment, cardsController.addComment);
 
 module.exports = router;

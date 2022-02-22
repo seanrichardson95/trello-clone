@@ -10,6 +10,8 @@ const createCard = async (req, res, next) => {
     const newCard = {
       title: req.body.card.title,
       listId: req.body.listId,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
     };
 
     try {
@@ -44,6 +46,31 @@ const sendCard = (req, res, next) => {
   res.json({ card: req.card });
 };
 
+const addComment = async (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (errors.isEmpty()) {
+    const newComment = {
+      text: req.body.comment.text,
+      cardId: req.body.cardId,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+
+    try {
+      const card = await Card.findById(req.body.cardId);
+      card.comments.push(newComment);
+      await card.save();
+      res.json(card.comments[card.comments.length - 1]);
+    } catch (err) {
+      next(new HttpError("Creating card failed, please try again", 500));
+    }
+  } else {
+      return next(new HttpError("The input field is empty.", 404));
+  }
+};
+
 exports.sendCard = sendCard;
 exports.createCard = createCard;
 exports.getCard = getCard;
+exports.addComment = addComment;

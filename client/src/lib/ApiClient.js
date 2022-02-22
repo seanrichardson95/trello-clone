@@ -5,8 +5,10 @@ function logError(errorResponse) {
   const response = errorResponse.response;
 
   if (response && response.data && response.data.error) {
+    // eslint-disable-next-line no-console
     console.error(`HTTP Error: ${response.data.error}`);
   } else {
+    // eslint-disable-next-line no-console
     console.error("Error: ", errorResponse);
   }
 }

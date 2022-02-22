@@ -40,9 +40,17 @@ const CardSchema = new Schema({
     type: mongoose.Types.ObjectId,
     ref: "Board",
   },
-  comments: {
-    type: String,
-  },
+  comments: [
+    {
+      text: { type: String },
+      cardId: {
+        ref: "Card",
+        type: mongoose.Types.ObjectId,
+      },
+      createdAt: { type: Date },
+      updatedAt: { type: Date }
+    }
+  ],
   commentsCount: {
     type: Number,
   },

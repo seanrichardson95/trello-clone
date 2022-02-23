@@ -1,35 +1,57 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchCard } from '../../actions/CardActions';
+import { fetchCard, editCard } from '../../actions/CardActions';
 
 const Card = () => {
   const cardId = useParams().id;
   const dispatch = useDispatch();
   const history = useHistory();
-
-
-  useEffect(() => {
-    dispatch(fetchCard(cardId));
-  }, [dispatch, cardId])
-
   const card = useSelector((state) => {
     return state.cards.find((card) => card._id === cardId);
   });
+  const [cardFetched, setCardFetched] = useState(false);
+  const [title, setTitle] = useState("");
+
+
+  useEffect(() => {
+    if (cardFetched) {
+      setTitle(card.title)
+    }
+  }, [cardFetched])
+
+
+  useEffect(() => {
+    dispatch(fetchCard(cardId, () => setCardFetched(true)));
+  }, [dispatch, cardId])
+
 
   const handleCloseCard = () => {
     history.push(`/boards/${card.boardId}`);
   }
 
-  // let list;
-  // if (card) {
-  //     list = useSelector(state => state.lists).find(l => l._id === card.listId);
-  // }
+  const handleChangeTitle = (e) => {
+    e.preventDefault();
+    setTitle(e.target.value);
+  }
+
+  const handleSaveTitle = (e) => {
+    e.preventDefault();
+    dispatch(editCard({ title: e.target.value }, cardId));
+  }
+
+  const lists = useSelector(state => state.lists);
+  let list;
+  if (card) {
+      list = lists.find(l => l._id === card.listId);
+  }
 
   if (!card) {
     return null;
   }
+
+
   // in list <a className="link">{list.title}</a>
 
   return (
@@ -39,7 +61,7 @@ const Card = () => {
         <i className="x-icon icon close-modal" onClick={handleCloseCard}></i>
         <header>
           <i className="card-icon icon .close-modal"></i>
-          <textarea className="list-title" style={{ height: "45px" }} value={card.title}>
+          <textarea className="list-title" style={{ height: "45px" }} value={title} onChange={handleChangeTitle} onBlur={handleSaveTitle}>
           </textarea>
           <p>
             <i className="sub-icon sm-icon"></i>

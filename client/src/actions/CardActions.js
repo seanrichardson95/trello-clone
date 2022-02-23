@@ -33,10 +33,26 @@ export function fetchCardSuccess(card) {
   return { type: types.FETCH_CARD_SUCCESS, card };
 }
 
+export function editCardSuccess(data) {
+  return { type: types.EDIT_CARD_SUCCESS, card: {...data} };
+}
+
 export function fetchCard(id, callback) {
   return function (dispatch) {
     apiClient.getCard(id, (data) => {
       dispatch(fetchCardSuccess(data));
+
+      if (callback) {
+        callback();
+      }
+    })
+  }
+}
+
+export function editCard(obj, id, callback) {
+  return function (dispatch) {
+    apiClient.editCard(obj, id, (data) => {
+      dispatch(editCardSuccess(data));
 
       if (callback) {
         callback();

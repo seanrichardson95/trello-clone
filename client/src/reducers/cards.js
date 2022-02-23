@@ -7,9 +7,7 @@ export default function cards(state = [], action) {
       );
       let newState = [...state];
       cards.forEach((card) => {
-        if (!newState.find((existingCard) => existingCard._id === card._id)) {
-          newState.push(card);
-        }
+        newState.push(card);
       });
       return newState;
     }
@@ -28,6 +26,16 @@ export default function cards(state = [], action) {
       } else {
         return [action.card];
       }
+    }
+    case "EDIT_CARD_SUCCESS": {
+      console.log(action.card);
+      return [...state].map((card) => {
+        if (card._id === action.card.card._id) {
+          console.log("card got updated");
+          return action.card.card;
+        }
+        return card;
+      })
     }
     default:
       return state;

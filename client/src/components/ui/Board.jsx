@@ -6,24 +6,34 @@ import { fetchBoard } from '../../actions/BoardActions';
 import ExistingLists from './ExistingLists';
 import Card from './Card';
 
-const Board = ({ boardId, cardId, isModalOpen }) => {
-  const id = boardId || useParams().id;
+const Board = ({ location }) => {
+  const path = location.pathname.split("/")[1];
+  const cardId = useParams().id;
+  const card = useSelector(state => state.cards).find(card => card._id === cardId);
+  let boardId;
+  if (path === "boards") {
+    boardId = useParams().id;
+  } else {
+    if (card) {
+      boardId = card.boardId;
+    }
+  }
+
   const dispatch = useDispatch();
   const history = useHistory();
-  const board = useSelector(state => state.boards).find(board => board._id === id);
-
-  useEffect(() => dispatch(fetchBoard(id)), [dispatch, id]);
-
+  const board = useSelector(state => state.boards).find(board => board._id === boardId);
+  // with no boardId, don't dispatch
+  useEffect(() => {
+    if (boardId) {
+      dispatch(fetchBoard(boardId))
+    }
+  }, [dispatch, boardId]);
 
   const onShowCard = (id) => {
     return () => {
       history.push(`/cards/${id}`);
     };
   };
-
-  const handleCloseCard = () => {
-    history.push(`/boards/${boardId}`);
-  }
 
   if (!board) return null;
 
@@ -43,7 +53,7 @@ const Board = ({ boardId, cardId, isModalOpen }) => {
         </div>
       </header>
       <main>
-        <ExistingLists boardId={id} onShowCard={onShowCard} />
+        <ExistingLists boardId={boardId} onShowCard={onShowCard} />
       </main>
       <div className="menu-sidebar">
         <div id="menu-main" className="main slide">
@@ -135,7 +145,6 @@ const Board = ({ boardId, cardId, isModalOpen }) => {
           </div>
         </div>
       </div>
-      <Card isOpen={isModalOpen || false} id={cardId} handleCloseCard={handleCloseCard} />
       <div id="dropdown-container"></div>
     </>
   );

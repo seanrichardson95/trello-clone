@@ -7,7 +7,14 @@ export default function cards(state = [], action) {
       );
       let newState = [...state];
       cards.forEach((card) => {
-        newState.push(card);
+        const indx = newState.findIndex(
+          (existingCard) => existingCard._id === card._id
+        );
+        if (indx === -1) {
+          newState.push(card);
+        } else {
+          newState[indx] = card;
+        }
       });
       return newState;
     }
@@ -16,26 +23,27 @@ export default function cards(state = [], action) {
     }
     case "FETCH_CARD_SUCCESS": {
       const cards = [...state];
-      if (cards.length > 0 && cards.find((card) => card._id === action.card._id)) {
+      if (
+        cards.length > 0 &&
+        cards.find((card) => card._id === action.card._id)
+      ) {
         return cards.map((card) => {
           if (card._id === action.card._id) {
             return action.card;
           }
           return card;
-        })
+        });
       } else {
         return [action.card];
       }
     }
     case "EDIT_CARD_SUCCESS": {
-      console.log(action.card);
       return [...state].map((card) => {
         if (card._id === action.card.card._id) {
-          console.log("card got updated");
           return action.card.card;
         }
         return card;
-      })
+      });
     }
     default:
       return state;

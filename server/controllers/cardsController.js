@@ -41,6 +41,7 @@ const getCard = async (req, res, next) => {
 
   try {
     const card = await Card.findById(id);
+    // populate comments
 
     if (!card) {
       throw new Error();
@@ -60,9 +61,14 @@ const editCard = async (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
     try {
-      let card = await Card.findOneAndUpdate({ _id: req.params.id }, req.body.card, {
-        new: true,
-      });
+      let card = await Card.findOneAndUpdate(
+        { _id: req.params.id },
+        req.body.card,
+        {
+          new: true,
+        }
+      );
+
       req.card = card;
       next();
     } catch (e) {
@@ -74,27 +80,27 @@ const editCard = async (req, res, next) => {
 };
 
 const addComment = async (req, res, next) => {
-  const errors = validationResult(req);
-
-  if (errors.isEmpty()) {
-    const newComment = {
-      text: req.body.comment.text,
-      cardId: req.body.cardId,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-
-    try {
-      const card = await Card.findById(req.body.cardId);
-      card.comments.push(newComment);
-      card.commentsCount = card.comments.length;
-      await card.save();
-      res.json(card.comments[card.comments.length - 1]);
-    } catch (err) {
-      next(new HttpError("Creating card failed, please try again", 500));
-    }
-  } else {
-      return next(new HttpError("The input field is empty.", 404));
+  console.log(req.comment);
+  try {
+    const card = await Card.findById(req.comment.cardId);
+    console.log(
+      "comments count: ",
+      card.commentsCount,
+      typeof card.commentsCount
+    );
+    const newCard = await Card.findOneAndUpdate(
+      { _id: req.comment.cardId },
+      {
+        comments: [...card.comments, req.comment._id],
+        commentsCount: card.comments.length + 1,
+      },
+      { new: true }
+    );
+    console.log("new Card: ", newCard);
+    next();
+  } catch (err) {
+    console.log(err);
+    next(new HttpError("Creating card failed, please try again", 500));
   }
 };
 

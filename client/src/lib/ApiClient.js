@@ -68,15 +68,22 @@ const apiClient = {
       .get(`${routes.CARDS_URL}/${id}`)
       .then(unwrapData)
       .then(callback)
-      .catch(logError)
+      .catch(logError);
   },
   editCard: function (card, id, callback) {
     return axios
       .put(`${routes.CARDS_URL}/${id}`, card)
       .then(unwrapData)
       .then(callback)
-      .catch(logError)
-  }
+      .catch(logError);
+  },
+  addComment: function (comment, callback) {
+    return axios
+      .post(routes.COMMENTS_URL, comment)
+      .then(unwrapData)
+      .then(callback)
+      .catch(logError);
+  },
 };
 
 export default apiClient;

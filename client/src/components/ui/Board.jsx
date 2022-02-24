@@ -8,11 +8,14 @@ import Card from './Card';
 
 const Board = ({ location }) => {
   const path = location.pathname.split("/")[1];
-  const cardId = useParams().id;
-  const card = useSelector(state => state.cards).find(card => card._id === cardId);
+  const paramId = useParams().id;
+  // const cardId = useParams().id;
+  const card = useSelector(state => state.cards).find(card => card._id === paramId);
   let boardId;
+  
+  
   if (path === "boards") {
-    boardId = useParams().id;
+    boardId = paramId
   } else {
     if (card) {
       boardId = card.boardId;

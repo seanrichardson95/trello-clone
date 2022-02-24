@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchCard, editCard } from '../../actions/CardActions';
+import { fetchCard, editCard, addComment } from '../../actions/CardActions';
 
 const Card = () => {
   const cardId = useParams().id;
@@ -13,11 +13,15 @@ const Card = () => {
   });
   const [cardFetched, setCardFetched] = useState(false);
   const [title, setTitle] = useState("");
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [description, setDescription] = useState('');
+  const [comment, setComment] = useState('');
 
 
   useEffect(() => {
     if (cardFetched) {
-      setTitle(card.title)
+      setTitle(card.title);
+      setDescription(card.description);
     }
   }, [cardFetched])
 
@@ -36,9 +40,37 @@ const Card = () => {
     setTitle(e.target.value);
   }
 
-  const handleSaveTitle = (e) => {
+  const handleNewComment = (e) => {
     e.preventDefault();
-    dispatch(editCard({ title: e.target.value }, cardId));
+    dispatch(addComment(comment, cardId));
+  }
+
+  // const handleSaveTitle = (e) => {
+  //   e.preventDefault();
+  //   dispatch(editCard({card: {title: e.target.value}}, cardId));
+  // }
+
+  const handleSave = (inputType, value, callback) => {
+    
+
+
+    return function(e) {
+      
+      e.preventDefault();
+      if(inputType === "title" && value === "") {
+        return
+      }
+
+      const obj = {card: {}};
+
+      obj["card"][inputType] = value;
+    
+      dispatch(editCard(obj, cardId));
+
+      if(callback) {
+        callback();
+      }
+    }
   }
 
   const lists = useSelector(state => state.lists);
@@ -61,7 +93,7 @@ const Card = () => {
         <i className="x-icon icon close-modal" onClick={handleCloseCard}></i>
         <header>
           <i className="card-icon icon .close-modal"></i>
-          <textarea className="list-title" style={{ height: "45px" }} value={title} onChange={handleChangeTitle} onBlur={handleSaveTitle}>
+          <textarea className="list-title" style={{ height: "45px" }} value={title} onChange={handleChangeTitle} onBlur={handleSave("title", title)}>
           </textarea>
           <p>
             <i className="sub-icon sm-icon"></i>
@@ -111,18 +143,38 @@ const Card = () => {
               </ul>
               <form className="description">
                 <p>Description</p>
-                <span id="description-edit" className="link">
-                  Edit
-                </span>
-                <p className="textarea-overlay">
-                  {card.description}
-                </p>
-                <p id="description-edit-options" className="hidden">
-                  You have unsaved edits on this field.{" "}
-                  <span className="link">View edits</span> -{" "}
-                  <span className="link">Discard</span>
-                </p>
+                {!isEditingDescription && 
+                  <>
+                    <span id="description-edit" className="link" onClick={() => setIsEditingDescription(true)}>
+                      Edit
+                    </span>
+                    <p className="textarea-overlay">
+                      {card.description}
+                    </p>
+                    <p id="description-edit-options" className={isEditingDescription ? "" : "hidden"}>
+        
+                      You have unsaved edits on this field.{" "}
+                      <span className="link">View edits</span> -{" "}
+                      <span className="link" onClick={() => setIsEditingDescription(false)}>Discard</span>
+                    </p>
+                  </>
+                }
+                {isEditingDescription && 
+                <>
+                  <textarea className="textarea-toggle" rows="1" autoFocus value={description} onChange={(e) => setDescription(e.target.value)}>
+                    
+                  </textarea>
+                  <div>
+                    <div className="button" value="Save" onClick={handleSave("description", description, () => setIsEditingDescription(false))}>
+                      Save
+                    </div>
+                    <i className="x-icon icon" onClick={() => setIsEditingDescription(false)}></i>
+                  </div>
+                </>
+                }
+                
               </form>
+              
             </li>
             <li className="comment-section">
               <h2 className="comment-icon icon">Add Comment</h2>
@@ -133,6 +185,8 @@ const Card = () => {
                 <div className="comment">
                   <label>
                     <textarea
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
                       required=""
                       rows="1"
                       placeholder="Write a comment..."
@@ -145,8 +199,9 @@ const Card = () => {
                     </div>
                     <div>
                       <input
+                        onClick={handleNewComment}
                         type="submit"
-                        className="button not-implemented"
+                        className={`button ${comment.length === 0 ? "not-implemented" : ""}`}
                         value="Save"
                       />
                     </div>

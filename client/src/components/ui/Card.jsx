@@ -20,11 +20,13 @@ const Card = () => {
   const [description, setDescription] = useState('');
   const [comment, setComment] = useState('');
   const [isEditingLabels, setIsEditingLabels] = useState(false);
+  const [isArchived, setIsArchived] = useState(false);
 
   useEffect(() => {
     if (cardFetched) {
       setTitle(card.title);
       setDescription(card.description);
+      setIsArchived(card.archived);
     }
   }, [cardFetched])
 
@@ -66,7 +68,8 @@ const Card = () => {
         callback();
       }
     }
-  }
+  };
+
 
   const lists = useSelector(state => state.lists);
   let list;
@@ -86,6 +89,11 @@ const Card = () => {
       <div className="screen"></div>
       <div id="modal">
         <i className="x-icon icon close-modal" onClick={handleCloseCard}></i>
+        {isArchived ?
+        <div className="archived-banner">
+          <i className="file-icon icon"></i>This card is archived.
+        </div>
+        : ""}
         <header>
           <i className="card-icon icon .close-modal"></i>
           <textarea className="list-title" style={{ height: "45px" }} value={title} onChange={handleChangeTitle} onBlur={handleSave("title", title)}>
@@ -228,9 +236,22 @@ const Card = () => {
               <i className="check-icon sm-icon"></i>
             </li>
             <hr />
-            <li className="archive-button">
+            {!isArchived ?
+            <li className="archive-button" onClick={handleSave('archived', true, () => setIsArchived(true))}>
               <i className="file-icon sm-icon "></i>Archive
             </li>
+            : ""}
+            {isArchived ?
+            <>
+              <li className="unarchive-button" onClick={handleSave('archived', false, () => setIsArchived(false))}>
+                <i className="send-icon sm-icon"></i>Send to board
+              </li>
+              <li className="red-button">
+                <i className="minus-icon sm-icon"></i>Delete
+              </li>
+             </>
+             : ""
+            }
           </ul>
           <ul className="light-list">
             <li className="not-implemented">Share and more...</li>

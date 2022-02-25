@@ -10,11 +10,10 @@ import Card_ui from "./ui/Card_ui";
 import CopyCardPopover from "./ui/CopyCardPopover";
 import CreateBoard from "./ui/CreateBoard";
 import DueDatePopover from "./ui/DueDatePopover";
-import LabelsPopover from "./ui/LabelsPopover";
+import LabelsPopover_ui from "./ui/LabelsPopover_ui";
 import MoveCardPopover from "./ui/MoveCardPopover";
 import SingleBoard from "./ui/SingleBoard";
 import Board from "./ui/Board";
-import BoardWithModal from './ui/BoardWithModal';
 import Card from "./ui/Card";
 
 const Application = () => {
@@ -33,7 +32,7 @@ const Application = () => {
       <Route path="/ui/copyCardPopover" component={CopyCardPopover} />
       <Route path="/ui/createBoard" component={CreateBoard} />
       <Route path="/ui/dueDatePopover" component={DueDatePopover} />
-      <Route path="/ui/labelsPopover" component={LabelsPopover} />
+      <Route path="/ui/labelsPopover" component={LabelsPopover_ui} />
       <Route path="/ui/moveCardPopover" component={MoveCardPopover} />
       <Route path="/ui/singleBoard" component={SingleBoard} />
       <Route path="/(boards|cards)/:id" component={Board} />

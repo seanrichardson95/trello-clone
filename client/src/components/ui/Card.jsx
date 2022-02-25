@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchCard, editCard } from '../../actions/CardActions';
 import { addComment } from '../../actions/CommentActions';
 import ActivitySection from './ActivitySection';
+import LabelsPopover from './LabelsPopover';
 
 const Card = () => {
   const cardId = useParams().id;
@@ -18,7 +19,7 @@ const Card = () => {
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [description, setDescription] = useState('');
   const [comment, setComment] = useState('');
-
+  const [isEditingLabels, setIsEditingLabels] = useState(false);
 
   useEffect(() => {
     if (cardFetched) {
@@ -99,26 +100,15 @@ const Card = () => {
               <ul className="modal-details-list">
                 <li className="labels-section">
                   <h3>Labels</h3>
+                  {card.labels.map(color => {
+                    return (
+                    <div key={`${card._id}_${color}`} className="member-container">
+                      <div className={`${color} label colorblindable`}></div>
+                    </div>
+                    );
+                  })}
                   <div className="member-container">
-                    <div className="green label colorblindable"></div>
-                  </div>
-                  <div className="member-container">
-                    <div className="yellow label colorblindable"></div>
-                  </div>
-                  <div className="member-container">
-                    <div className="orange label colorblindable"></div>
-                  </div>
-                  <div className="member-container">
-                    <div className="blue label colorblindable"></div>
-                  </div>
-                  <div className="member-container">
-                    <div className="purple label colorblindable"></div>
-                  </div>
-                  <div className="member-container">
-                    <div className="red label colorblindable"></div>
-                  </div>
-                  <div className="member-container">
-                    <i className="plus-icon sm-icon"></i>
+                    <i className="plus-icon sm-icon" onClick={() => setIsEditingLabels(true)}></i>
                   </div>
                 </li>
                 <li className="due-date-section">
@@ -247,6 +237,7 @@ const Card = () => {
           </ul>
         </aside>
       </div>
+      {isEditingLabels && <LabelsPopover setIsEditingLabels={setIsEditingLabels} />}
     </div>
   );
 };

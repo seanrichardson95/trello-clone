@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchCard, editCard } from '../../actions/CardActions';
-import { addComment } from '../../actions/CommentActions';
-import ActivitySection from './ActivitySection';
-import LabelsPopover from './LabelsPopover';
+import { fetchCard, editCard } from "../../actions/CardActions";
+import { addComment } from "../../actions/CommentActions";
+import ActivitySection from "./ActivitySection";
+import LabelsPopover from "./LabelsPopover";
+import DueDatePopover from "./DueDatePopover";
 
 const Card = () => {
   const cardId = useParams().id;
@@ -14,13 +15,16 @@ const Card = () => {
   const card = useSelector((state) => {
     return state.cards.find((card) => card._id === cardId);
   });
+  const dateInput = useRef(null);
+
   const [cardFetched, setCardFetched] = useState(false);
   const [title, setTitle] = useState("");
   const [isEditingDescription, setIsEditingDescription] = useState(false);
-  const [description, setDescription] = useState('');
-  const [comment, setComment] = useState('');
+  const [description, setDescription] = useState("");
+  const [comment, setComment] = useState("");
   const [isEditingLabels, setIsEditingLabels] = useState(false);
   const [isArchived, setIsArchived] = useState(false);
+  const [isEditingDueDate, setIsEditingDueDate] = useState(false);
 
   useEffect(() => {
     if (cardFetched) {
@@ -28,59 +32,62 @@ const Card = () => {
       setDescription(card.description);
       setIsArchived(card.archived);
     }
-  }, [cardFetched])
-
+  }, [cardFetched]);
 
   useEffect(() => {
     dispatch(fetchCard(cardId, () => setCardFetched(true)));
-  }, [dispatch, cardId])
-
+  }, [dispatch, cardId]);
 
   const handleCloseCard = () => {
     history.push(`/boards/${card.boardId}`);
-  }
+  };
 
   const handleChangeTitle = (e) => {
     e.preventDefault();
     setTitle(e.target.value);
-  }
+  };
 
   const handleNewComment = (e) => {
     e.preventDefault();
     dispatch(addComment(comment, cardId));
-    setComment('');
-  }
+    setComment("");
+  };
 
   const handleSave = (inputType, value, callback) => {
-    return function(e) {
+    return function (e) {
       e.preventDefault();
-      if(inputType === "title" && value === "") {
-        return
+      if (inputType === "title" && value === "") {
+        return;
       }
 
-      const obj = {card: {}};
+      const obj = { card: {} };
 
       obj["card"][inputType] = value;
 
       dispatch(editCard(obj, cardId));
 
-      if(callback) {
+      if (callback) {
         callback();
       }
-    }
+    };
   };
 
+  const handleSaveDate = (e) => {
+    e.preventDefault();
+    const [month, day, year] = dateInput.current.value.split("/");
+    const dueDate = new Date(year, month - 1, day);
+    dispatch(editCard({ card: { dueDate } }, cardId));
+  };
 
-  const lists = useSelector(state => state.lists);
+  const lists = useSelector((state) => state.lists);
   let list;
   if (card) {
-      list = lists.find(l => l._id === card.listId);
+    list = lists.find((l) => l._id === card.listId);
   }
 
   if (!card) {
     return null;
   }
-
 
   // in list <a className="link">{list.title}</a>
 
@@ -89,15 +96,22 @@ const Card = () => {
       <div className="screen"></div>
       <div id="modal">
         <i className="x-icon icon close-modal" onClick={handleCloseCard}></i>
-        {isArchived ?
-        <div className="archived-banner">
-          <i className="file-icon icon"></i>This card is archived.
-        </div>
-        : ""}
+        {isArchived ? (
+          <div className="archived-banner">
+            <i className="file-icon icon"></i>This card is archived.
+          </div>
+        ) : (
+          ""
+        )}
         <header>
           <i className="card-icon icon .close-modal"></i>
-          <textarea className="list-title" style={{ height: "45px" }} value={title} onChange={handleChangeTitle} onBlur={handleSave("title", title)}>
-          </textarea>
+          <textarea
+            className="list-title"
+            style={{ height: "45px" }}
+            value={title}
+            onChange={handleChangeTitle}
+            onBlur={handleSave("title", title)}
+          ></textarea>
           <p>
             <i className="sub-icon sm-icon"></i>
           </p>
@@ -108,65 +122,110 @@ const Card = () => {
               <ul className="modal-details-list">
                 <li className="labels-section">
                   <h3>Labels</h3>
-                  {card.labels.map(color => {
+                  {card.labels.map((color) => {
                     return (
-                    <div key={`${card._id}_${color}`} className="member-container">
-                      <div className={`${color} label colorblindable`}></div>
-                    </div>
+                      <div
+                        key={`${card._id}_${color}`}
+                        className="member-container"
+                      >
+                        <div className={`${color} label colorblindable`}></div>
+                      </div>
                     );
                   })}
                   <div className="member-container">
-                    <i className="plus-icon sm-icon" onClick={() => setIsEditingLabels(true)}></i>
+                    <i
+                      className="plus-icon sm-icon"
+                      onClick={() => setIsEditingLabels(true)}
+                    ></i>
                   </div>
                 </li>
                 <li className="due-date-section">
                   <h3>Due Date</h3>
-                  <div id="dueDateDisplay" className="overdue completed">
+                  <div
+                    id="dueDateDisplay"
+                    className="overdue completed"
+                    onClick={() => setIsEditingDueDate(true)}
+                  >
                     <input
                       id="dueDateCheckbox"
                       type="checkbox"
                       className="checkbox"
                       checked=""
                     />
-                    {card.dueDate ? new Date(card.dueDate).toDateString() : "No due date"}
-                    {card.dueDate ? new Date(card.dueDate) > Date.now() ? <span>(past due)</span> : null : null}
+                    {card.dueDate
+                      ? new Date(card.dueDate).toDateString()
+                      : "No due date"}
+                    {card.dueDate ? (
+                      new Date(card.dueDate) > Date.now() ? (
+                        <span>(past due)</span>
+                      ) : null
+                    ) : null}
                   </div>
+                  {isEditingDueDate && (
+                    <DueDatePopover
+                      dueDate={card.dueDate}
+                      onSubmit={handleSaveDate}
+                      onClose={() => setIsEditingDueDate(false)}
+                      onRemove={() => {}}
+                      dateInput={dateInput}
+                    />
+                  )}
                 </li>
               </ul>
               <form className="description">
                 <p>Description</p>
-                {!isEditingDescription &&
+                {!isEditingDescription && (
                   <>
-                    <span id="description-edit" className="link" onClick={() => setIsEditingDescription(true)}>
+                    <span
+                      id="description-edit"
+                      className="link"
+                      onClick={() => setIsEditingDescription(true)}
+                    >
                       Edit
                     </span>
-                    <p className="textarea-overlay">
-                      {card.description}
-                    </p>
-                    <p id="description-edit-options" className={isEditingDescription ? "" : "hidden"}>
-
+                    <p className="textarea-overlay">{card.description}</p>
+                    <p
+                      id="description-edit-options"
+                      className={isEditingDescription ? "" : "hidden"}
+                    >
                       You have unsaved edits on this field.{" "}
                       <span className="link">View edits</span> -{" "}
-                      <span className="link" onClick={() => setIsEditingDescription(false)}>Discard</span>
+                      <span
+                        className="link"
+                        onClick={() => setIsEditingDescription(false)}
+                      >
+                        Discard
+                      </span>
                     </p>
                   </>
-                }
-                {isEditingDescription &&
-                <>
-                  <textarea className="textarea-toggle" rows="1" autoFocus value={description} onChange={(e) => setDescription(e.target.value)}>
-
-                  </textarea>
-                  <div>
-                    <div className="button" value="Save" onClick={handleSave("description", description, () => setIsEditingDescription(false))}>
-                      Save
+                )}
+                {isEditingDescription && (
+                  <>
+                    <textarea
+                      className="textarea-toggle"
+                      rows="1"
+                      autoFocus
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                    ></textarea>
+                    <div>
+                      <div
+                        className="button"
+                        value="Save"
+                        onClick={handleSave("description", description, () =>
+                          setIsEditingDescription(false)
+                        )}
+                      >
+                        Save
+                      </div>
+                      <i
+                        className="x-icon icon"
+                        onClick={() => setIsEditingDescription(false)}
+                      ></i>
                     </div>
-                    <i className="x-icon icon" onClick={() => setIsEditingDescription(false)}></i>
-                  </div>
-                </>
-                }
-
+                  </>
+                )}
               </form>
-
             </li>
             <li className="comment-section">
               <h2 className="comment-icon icon">Add Comment</h2>
@@ -193,7 +252,9 @@ const Card = () => {
                       <input
                         onClick={handleNewComment}
                         type="submit"
-                        className={`button ${comment.length === 0 ? "not-implemented" : ""}`}
+                        className={`button ${
+                          comment.length === 0 ? "not-implemented" : ""
+                        }`}
                         value="Save"
                       />
                     </div>
@@ -236,29 +297,44 @@ const Card = () => {
               <i className="check-icon sm-icon"></i>
             </li>
             <hr />
-            {!isArchived ?
-            <li className="archive-button" onClick={handleSave('archived', true, () => setIsArchived(true))}>
-              <i className="file-icon sm-icon "></i>Archive
-            </li>
-            : ""}
-            {isArchived ?
-            <>
-              <li className="unarchive-button" onClick={handleSave('archived', false, () => setIsArchived(false))}>
-                <i className="send-icon sm-icon"></i>Send to board
+            {!isArchived ? (
+              <li
+                className="archive-button"
+                onClick={handleSave("archived", true, () =>
+                  setIsArchived(true)
+                )}
+              >
+                <i className="file-icon sm-icon "></i>Archive
               </li>
-              <li className="red-button">
-                <i className="minus-icon sm-icon"></i>Delete
-              </li>
-             </>
-             : ""
-            }
+            ) : (
+              ""
+            )}
+            {isArchived ? (
+              <>
+                <li
+                  className="unarchive-button"
+                  onClick={handleSave("archived", false, () =>
+                    setIsArchived(false)
+                  )}
+                >
+                  <i className="send-icon sm-icon"></i>Send to board
+                </li>
+                <li className="red-button">
+                  <i className="minus-icon sm-icon"></i>Delete
+                </li>
+              </>
+            ) : (
+              ""
+            )}
           </ul>
           <ul className="light-list">
             <li className="not-implemented">Share and more...</li>
           </ul>
         </aside>
       </div>
-      {isEditingLabels && <LabelsPopover setIsEditingLabels={setIsEditingLabels} />}
+      {isEditingLabels && (
+        <LabelsPopover setIsEditingLabels={setIsEditingLabels} />
+      )}
     </div>
   );
 };

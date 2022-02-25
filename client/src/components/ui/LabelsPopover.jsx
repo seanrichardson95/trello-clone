@@ -1,11 +1,35 @@
 import React from "react";
-const LabelsPopover = () => {
+import { useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { editCard } from '../../actions/CardActions';
+import COLORS from '../../constants/LabelColors.js';
+import Label from './Label';
+
+const LabelsPopover = ({ setIsEditingLabels }) => {
+  const cardId = useParams().id;
+  const dispatch = useDispatch();
+  const currLabels = useSelector(state => state.cards).find(card => card._id === cardId).labels;
+
+  const handleToggle = (color) => {
+    return () => {
+      let labels = [...currLabels];
+      const colorIdx = labels.indexOf(color);
+      if (colorIdx > -1) {
+        labels.splice(colorIdx, 1);
+      } else {
+        labels.push(color);
+      }
+      dispatch(editCard({ card: { labels } }, cardId));
+    };
+  };
+
   return (
     <div className="popover labels">
       <div id="add-options-labels-dropdown">
         <header>
           <span>Labels</span>
-          <a href="#" className="icon-sm icon-close"></a>
+          <a href="#" className="icon-sm icon-close" onClick={() => setIsEditingLabels(false)}></a>
         </header>
         <div className="content">
           <input
@@ -15,54 +39,9 @@ const LabelsPopover = () => {
           />
           <div className="labels-search-results">
             <ul className="label-list">
-              <li>
-                <div className="green colorblindable" data-id="1">
-                  <i className="check-icon sm-icon"></i>
-                </div>
-                <div className="label-background green"></div>
-                <div className="label-background-overlay"></div>
-                <i className="edit-icon icon not-implemented"></i>
-              </li>
-              <li>
-                <div className="yellow colorblindable" data-id="2">
-                  <i className="check-icon sm-icon"></i>
-                </div>
-                <div className="label-background yellow"></div>
-                <div className="label-background-overlay"></div>
-                <i className="edit-icon icon not-implemented"></i>
-              </li>
-              <li>
-                <div className="orange colorblindable" data-id="3">
-                  <i className="check-icon sm-icon"></i>
-                </div>
-                <div className="label-background orange"></div>
-                <div className="label-background-overlay"></div>
-                <i className="edit-icon icon not-implemented"></i>
-              </li>
-              <li>
-                <div className="red colorblindable" data-id="4">
-                  <i className="check-icon sm-icon"></i>
-                </div>
-                <div className="label-background red"></div>
-                <div className="label-background-overlay"></div>
-                <i className="edit-icon icon not-implemented"></i>
-              </li>
-              <li>
-                <div className="purple colorblindable" data-id="5">
-                  <i className="check-icon sm-icon"></i>
-                </div>
-                <div className="label-background purple"></div>
-                <div className="label-background-overlay"></div>
-                <i className="edit-icon icon not-implemented"></i>
-              </li>
-              <li>
-                <div className="blue colorblindable" data-id="6">
-                  <i className="check-icon sm-icon"></i>
-                </div>
-                <div className="label-background blue"></div>
-                <div className="label-background-overlay"></div>
-                <i className="edit-icon icon not-implemented"></i>
-              </li>
+              {COLORS.map((color, idx) => {
+                return <Label key={color} color={color} id={idx + 1} selected={currLabels.includes(color)} handleToggle={handleToggle}/>
+              })}
             </ul>
             <ul className="light-list">
               <li className="not-implemented">Create a new label</li>

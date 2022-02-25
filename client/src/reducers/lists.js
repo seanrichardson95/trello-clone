@@ -11,6 +11,7 @@ export default function lists(state = [], action) {
           newState.push(list);
         }
       });
+
       return newState;
     }
     case actions.CREATE_LIST_SUCCESS: {

@@ -9,12 +9,7 @@ const CardItem = ({ id, handleShowCard }) => {
       <div className="card ">
         <i className="edit-toggle edit-icon sm-icon"></i>
         <div className="card-info">
-          <div className="card-label green colorblindable"></div>
-          <div className="card-label yellow colorblindable"></div>
-          <div className="card-label red colorblindable"></div>
-          <div className="card-label orange colorblindable"></div>
-          <div className="card-label blue colorblindable"></div>
-          <div className="card-label purple colorblindable"></div>
+          {card.labels.map(color => (<div key={color} className={`card-label ${color} colorblindable`}></div>))}
           <p>
             {card.title}
           </p>

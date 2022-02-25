@@ -40,8 +40,7 @@ const getCard = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    const card = await Card.findById(id);
-    // populate comments
+    const card = await Card.findById(id).populate('comments');
 
     if (!card) {
       throw new Error();

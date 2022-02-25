@@ -2,7 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchCard, editCard, addComment } from '../../actions/CardActions';
+import { fetchCard, editCard } from '../../actions/CardActions';
+import { addComment } from '../../actions/CommentActions';
+import ActivitySection from './ActivitySection';
 
 const Card = () => {
   const cardId = useParams().id;
@@ -43,19 +45,11 @@ const Card = () => {
   const handleNewComment = (e) => {
     e.preventDefault();
     dispatch(addComment(comment, cardId));
+    setComment('');
   }
 
-  // const handleSaveTitle = (e) => {
-  //   e.preventDefault();
-  //   dispatch(editCard({card: {title: e.target.value}}, cardId));
-  // }
-
   const handleSave = (inputType, value, callback) => {
-    
-
-
     return function(e) {
-      
       e.preventDefault();
       if(inputType === "title" && value === "") {
         return
@@ -64,7 +58,7 @@ const Card = () => {
       const obj = {card: {}};
 
       obj["card"][inputType] = value;
-    
+
       dispatch(editCard(obj, cardId));
 
       if(callback) {
@@ -143,7 +137,7 @@ const Card = () => {
               </ul>
               <form className="description">
                 <p>Description</p>
-                {!isEditingDescription && 
+                {!isEditingDescription &&
                   <>
                     <span id="description-edit" className="link" onClick={() => setIsEditingDescription(true)}>
                       Edit
@@ -152,17 +146,17 @@ const Card = () => {
                       {card.description}
                     </p>
                     <p id="description-edit-options" className={isEditingDescription ? "" : "hidden"}>
-        
+
                       You have unsaved edits on this field.{" "}
                       <span className="link">View edits</span> -{" "}
                       <span className="link" onClick={() => setIsEditingDescription(false)}>Discard</span>
                     </p>
                   </>
                 }
-                {isEditingDescription && 
+                {isEditingDescription &&
                 <>
                   <textarea className="textarea-toggle" rows="1" autoFocus value={description} onChange={(e) => setDescription(e.target.value)}>
-                    
+
                   </textarea>
                   <div>
                     <div className="button" value="Save" onClick={handleSave("description", description, () => setIsEditingDescription(false))}>
@@ -172,9 +166,9 @@ const Card = () => {
                   </div>
                 </>
                 }
-                
+
               </form>
-              
+
             </li>
             <li className="comment-section">
               <h2 className="comment-icon icon">Add Comment</h2>
@@ -209,91 +203,7 @@ const Card = () => {
                 </div>
               </div>
             </li>
-            <li className="activity-section">
-              <h2 className="activity-icon icon">Activity</h2>
-              <ul className="horiz-list">
-                <li className="not-implemented">Show Details</li>
-              </ul>
-              <ul className="modal-activity-list">
-                <li>
-                  <div className="member-container">
-                    <div className="card-member">TP</div>
-                  </div>
-                  <h3>Taylor Peat</h3>
-                  <div className="comment static-comment">
-                    <span>The activities are not functional.</span>
-                  </div>
-                  <small>
-                    22 minutes ago - <span className="link">Edit</span> -{" "}
-                    <span className="link">Delete</span>
-                  </small>
-                  <div className="comment">
-                    <label>
-                      <textarea required="" rows="1">
-                        The activities have not been implemented yet.
-                      </textarea>
-                      <div>
-                        <a className="light-button card-icon sm-icon"></a>
-                        <a className="light-button smiley-icon sm-icon"></a>
-                        <a className="light-button email-icon sm-icon"></a>
-                      </div>
-                      <div>
-                        <p>You haven&apos;t typed anything!</p>
-                        <input
-                          type="submit"
-                          className="button not-implemented"
-                          value="Save"
-                        />
-                        <i className="x-icon icon"></i>
-                      </div>
-                    </label>
-                  </div>
-                </li>
-                <li>
-                  <div className="member-container">
-                    <div className="card-member small-size">VR</div>
-                  </div>
-                  <p>
-                    <span className="member-name">Victor Reyes</span> changed the
-                    background of this board <small>yesterday at 4:53 PM</small>
-                  </p>
-                </li>
-                <li className="activity-comment">
-                  <div className="member-container">
-                    <div className="card-member">VR</div>
-                  </div>
-                  <h3>Victor Reyes</h3>
-                  <div className="comment static-comment">
-                    <span>Example of a comment.</span>
-                  </div>
-                  <small>
-                    22 minutes ago - <span className="link">Edit</span> -{" "}
-                    <span className="link">Delete</span>
-                  </small>
-                  <div className="comment">
-                    <label>
-                      <textarea required="" rows="1">
-                        Example of a comment.
-                      </textarea>
-                      <div>
-                        <a className="light-button card-icon sm-icon"></a>
-                        <a className="light-button smiley-icon sm-icon"></a>
-                        <a className="light-button email-icon sm-icon"></a>
-                      </div>
-                      <div>
-                        <p>You haven&apos;t typed anything!</p>
-                        <input
-                          type="submit"
-                          className="button not-implemented"
-                          value="Save"
-                        />
-                        <i className="x-icon icon"></i>
-                      </div>
-                    </label>
-                  </div>
-                </li>
-              </ul>
-            </li>
+            <ActivitySection />
           </ul>
         </section>
         <aside className="modal-buttons">
